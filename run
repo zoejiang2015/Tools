@@ -1,4 +1,13 @@
-   ctime = time.strftime("%m-%d")
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+import shutil
+import time
+
+import pytest
+# from util.api_util.api.init_basic_data import InitData
+
+if __name__ == '__main__':
+    ctime = time.strftime("%m-%d")
 
     # InitData().delete_all_basic_data()  
 
@@ -7,3 +16,6 @@
                  '--clean-alluredir'])
     shutil.copy('resource/allure-results/categories.json', f'resource/allure-results/allure-results-{ctime}')
     shutil.copy('resource/allure-results/environment.properties', f'resource/allure-results/allure-results-{ctime}')
+
+    # pytest.main(['-n 2'])
+    # pytest.main(['-s', '-v', '-m=P0'])
