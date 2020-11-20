@@ -1,0 +1,192 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+import time
+
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.wait import WebDriverWait
+
+from util.logger import Logger
+from util.ui_driver.driver_base import WebDriver
+
+log = Logger(logger='assertion').logger
+
+
+class Assertion:
+
+    def __init__(self, driver: WebDriver):
+        self.driver = driver
+
+    def assert_contains_text(self, expected_text):
+        try:
+            log.info('正在断言页面中是否包含【' + expected_text + '】...')
+            start_time = time.time()
+            while True:
+                flag = self.driver.get_page_source().__contains__(expected_text)
+                self.driver.sleep(0.5)
+                end_time = time.time()
+                duration = end_time - start_time
+                if duration > 10:
+                    log.info('超过10秒未找到..., 正在停止查找')
+                    self.driver.get_screenshot_as_file()
+                    raise TimeoutError
+                if flag:
+                    log.info('页面中包含【' + expected_text + '】,断言成功')
+                    log.info('用例执行成功')
+                    assert True
+                    break
+        except Exception as e:
+            log.error('页面不包含【' + expected_text + '】,断言失败', e)
+            self.driver.get_screenshot_as_file()
+            assert False
+
+    def assert_not_contains_text(self, expected_text):
+        try:
+            log.info('正在断言页面中是否不包含【' + expected_text + '】...')
+            start_time = time.time()
+            while True:
+                flag = self.driver.get_page_source().__contains__(expected_text)
+                self.driver.sleep(0.5)
+                end_time = time.time()
+                duration = end_time - start_time
+                if duration > 5:
+                    log.info('超过5秒未找到..., 正在停止查找')
+                    break
+                if not flag:
+                    log.info('页面中不包含【' + expected_text + '】,断言成功')
+                    log.info('用例执行成功')
+                    assert True
+                    break
+                if flag:
+                    log.error('页面包含【' + expected_text + '】,断言失败')
+                    assert False
+        except Exception as e:
+            log.error('页面包含【' + expected_text + '】,断言失败', e)
+            self.driver.get_screenshot_as_file()
+            assert False
+
+    def assert_alert_text_equal(self, expect, timeout):
+        log.info('正在断言alert弹窗的提示信息与【' + str(expect) + '】是否一致')
+        text = None
+        try:
+            alert = WebDriverWait(self.driver, timeout).until(EC.alert_is_present())
+            text = alert.text
+            alert.accept()
+            assert str(expect) == text, '断言' + str(expect) + text + '不相等'
+        except:
+            log.error('实际值【' + text + '】与期望值【' + str(expect) + '】不一致,断言失败')
+            self.driver.get_screenshot_as_file()
+            assert False
+
+    def assert_text_in_expect(self, actual, expect):
+        """
+        断言实际值是否在期望值中
+        :param actual: 实际值要断言的值
+        :param expect: 期望的在里面的值
+        :return:
+        """
+        log.info('正在断言字符串实际值【' + str(actual) + '】是否在期望值【' + str(expect) + '】里...')
+        if actual in expect:
+            log.info('字符串实际值【' + str(actual) + '】在期望值【' + str(expect) + '】里, 断言成功')
+            log.info('用例执行成功')
+            assert True
+        else:
+            log.info('字符串实际值【' + str(actual) + '】不在期望值【' + str(expect) + '】里,断言失败')
+            self.driver.get_screenshot_as_file()
+            assert False
+
+    def assert_text_not_in_expect(self, actual, expect):
+        """
+        断言实际值是否在期望值中
+        :param actual: 实际值
+        :param expect: 期望值
+        :return:
+        """
+        log.info('正在断言字符串实际值【' + str(actual) + '】是否不在期望值【' + str(expect) + '】里...')
+        if actual not in expect:
+            log.info('字符串实际值【' + str(actual) + '】不在期望值【' + str(expect) + '】里,断言成功')
+            log.info('用例执行成功')
+            assert True
+        else:
+            log.info('字符串实际值【' + str(actual) + '】在期望值【' + str(expect) + '】里,断言失败')
+            self.driver.get_screenshot_as_file()
+            assert False
+
+    def assert_text_equal(self, actual, expect):
+        """
+        断言字符串相同，第一个参数传实际值，第二个参数传期望值
+        :param actual: 实际值
+        :param expect: 期望值
+        :return:
+        """
+        log.info('正在断言字符串实际值【' + str(actual) + '】和期望值【' + str(expect) + '】是否一致...')
+        if actual == expect:
+            log.info('字符串实际值【' + str(actual) + '】和期望值【' + str(expect) + '】一致，断言成功')
+            log.info('用例执行成功')
+            assert True
+        else:
+            log.info('字符串实际值【' + str(actual) + '】和期望值【' + str(expect) + '】不一致,断言失败')
+            self.driver.get_screenshot_as_file()
+            assert False
+
+    def assert_text_not_equal(self, actual, expect):
+        log.info('正在断言字符串实际值【' + str(actual) + '】和期望值【' + str(expect) + '】是否一致...')
+        if actual != expect:
+            log.info('字符串实际值【' + str(actual) + '】和期望值【' + str(expect) + '】不一致，断言成功')
+            log.info('用例执行成功')
+            assert True
+        else:
+            log.info('字符串实际值【' + str(actual) + '】和期望值【' + str(expect) + '】一致,断言失败')
+            self.driver.get_screenshot_as_file()
+            assert False
+
+    def assert_title_equal(self, expect_title):
+        title = self.driver.get_title()
+        log.info('正在断言页面title实际值【' + title + '】和期望值【' + expect_title + '】是否一致...')
+        if title == expect_title:
+            log.info('页面实际title【' + title + '】与期望值【' + expect_title + '】一致，断言成功')
+            log.info('用例执行成功')
+            assert True
+        else:
+            log.info('页面实际title【' + title + '】与期望值【' + expect_title + '】不一致,断言失败')
+            self.driver.get_screenshot_as_file()
+            assert False
+
+    def assert_url_equal(self, expect_url):
+        url = self.driver.get_current_url()
+        log.info('断言页面url实际url【' + url + '】和期望值【' + expect_url + '】是否一致...')
+        if url == expect_url:
+            log.info('实际url:【' + url + '】与期望值【' + expect_url + '】一致，断言成功')
+            log.info('用例执行成功')
+            assert True
+        else:
+            log.info('实际url:【' + url + '】与期望值:【' + expect_url + '】不一致,断言失败')
+            self.driver.get_screenshot_as_file()
+            assert False
+
+    def assert_true(self, flag):
+        log.info('正在断言布尔值【' + str(flag) + '】是否为True...')
+        if flag:
+            assert True
+            log.info('断言布尔值为True, 断言成功')
+            log.info('用例执行成功')
+        else:
+            log.info('断言布尔值为False, 断言失败')
+            self.driver.get_screenshot_as_file()
+            assert False
+
+    def assert_greater_than(self, actual, num):
+        """
+        断言实际值是否大于比较的值
+        :param actual: 实际值
+        :param num:  比较值
+        :return:
+        """
+        log.info('正在断言【' + str(actual) + '】是否大于' + str(num))
+        if actual > num:
+            assert True
+            log.info('断言成功')
+            log.info('用例执行成功')
+        else:
+            log.info('断言失败')
+            self.driver.get_screenshot_as_file()
+            assert False
