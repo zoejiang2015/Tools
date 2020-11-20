@@ -1,0 +1,40 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+from typing import List
+
+import pytest
+
+from util.config_util import Config
+from util.ui_driver.driver_base import WebDriver
+
+
+@pytest.fixture(autouse=True)
+def start_browser():
+    global driver
+    driver = WebDriver()
+    driver.maximize_window()
+    driver.implicitly_wait_default()
+    driver.get(Config().get_value('config.conf', 'url', 'server_url'))
+    driver.original_sendkeys('id', 'accountNo', Config().get_value('config.conf', 'accounts', 'username'))
+    driver.original_sendkeys('id', 'password', Config().get_value('config.conf', 'accounts', 'password'))
+    driver.original_click('cssSelector', '.ant-btn-primary')
+    driver.sleep(0.6)
+    driver.original_click('xpath', "//div[text()='测试环境']")
+    driver.sleep(0.6)
+    yield driver
+    # driver.quit()
+
+
+def pytest_configure(config):
+    config.addinivalue_line('markers', 'P0')
+    config.addinivalue_line('markers', 'P1')
+    config.addinivalue_line('markers', 'P2')
+    config.addinivalue_line('markers', '')
+
+
+def pytest_collection_modifyitems(
+        session: "Session", config: "Config", items: List["Item"]) -> None:
+    # item表示每个测试用例，解决用例名称中文显示问题
+    for item in items:
+        item.name = item.name.encode("utf-8").decode("unicode-escape")
+        item._nodeid = item._nodeid.encode("utf-8").decode("unicode-escape")
