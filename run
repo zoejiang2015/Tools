@@ -1,0 +1,9 @@
+   ctime = time.strftime("%m-%d")
+
+    # InitData().delete_all_basic_data()  
+
+    pytest.main(['--reruns', '3', '--reruns-delay', '3',
+                 f'--alluredir=resource/allure-results/allure-results-{ctime}',
+                 '--clean-alluredir'])
+    shutil.copy('resource/allure-results/categories.json', f'resource/allure-results/allure-results-{ctime}')
+    shutil.copy('resource/allure-results/environment.properties', f'resource/allure-results/allure-results-{ctime}')
