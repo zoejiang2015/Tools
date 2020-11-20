@@ -1,0 +1,125 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+import random
+import string
+
+
+class RandomUtil:
+
+    @staticmethod
+    def random_phone():
+        firsts = ['130', '131', '132', '133', '134', '135', '136', '137',
+                  '138', '139', '145', '147', '149', '150', '151', '152',
+                  '153', '155', '156', '157', '158', '159', '173', '176',
+                  '177', '178', '180', '181', '182', '183', '184', '185',
+                  '186', '187', '188', '189']
+        k = 8
+        phone = random.choice(firsts) + ''.join(random.sample('0123456789', k))
+        return phone
+
+    @staticmethod
+    def random_string(length, punctuation=False, digits=True, startswith=''):
+        """
+        随机字符串,传入长度，特殊字符默认没有，默认有数字
+        :param length: 长度
+        :param punctuation: 特殊符号,默认没有
+        :param digits: 数字,默认有
+        :param startswith: 自定义开头
+        :return: 一个随机字符串
+        """
+        sample = string.ascii_letters
+        if punctuation:
+            sample += string.punctuation
+
+        if digits:
+            sample += string.digits
+
+        return startswith + "".join([random.choice(sample) for _ in range(length - len(startswith))])
+
+    @staticmethod
+    def random_int(length, is_str=True):
+        """
+        随机数字。传入数字的长度，例如两位数传2. 已字符串形式return
+        :param length: 数字的长度
+        :param is_str: 默认是字符串，需要数字的将此设置为False
+        :return:
+        """
+        tmp = ''.join(str(random.choice(range(1, 10))) for _ in range(length))
+        if is_str:
+            return tmp
+        else:
+            return int(tmp)
+
+    @staticmethod
+    def random_int_range(start, end, is_str=True):
+        """
+        随机数字。传入数字的范围, 范围不包含end  以字符串形式return
+        :param length: 数字的范围
+        :param is_str: 默认是字符串，需要数字的将此设置为False
+        :return:
+        """
+        tmp = ''.join(str(random.randint(start, end)))
+        if is_str:
+            return tmp
+        else:
+            return int(tmp)
+
+    @staticmethod
+    def random_chinese(length, startswith=''):
+        """
+        随机汉字。传入汉字的长度
+        :param length: 汉字的长度
+        :return: 字符串形式return
+        """
+        chinese_list = ['用', '例', '描', '述', '完', '整', '比', '如', '步', '骤', '预', '期', '结', '果', '不', '缺', '失', '致', '界',
+                        '面',
+                        '描', '述', '无', '歧', '义', '比', '如', '预', '期', '跟', '以', '前', '一', '致', '与', '现', '一', '致', '有',
+                        '逻',
+                        '拆', '分', '粒', '度', '细', '辑', '一', '与', '不', '涉', '及', '多', '端', '交', '互', '耦', '合', '度', '低',
+                        '需',
+                        '晰', '步', '骤', '简', '介', '技', '术', '上', '实', '现', '成', '本', '低', '比', '如', '列', '拖', '动', '业',
+                        '务',
+                        '个', '最', '好', '显', '示', '属', '性', '属', '性', '强', '一', '些', '求', '描', '述', '清', '属', '性', '不',
+                        '能',
+                        '不', '涉', '及', '非', '浏', '览', '器', '端', '校', '验', '比', '如', '导', '出', '校', '验', '表', '头', '字',
+                        '段',
+                        '复', '杂', '性', '不', '高', '比', '如', '改', '了', '工', '厂', '业', '务', '规', '则', '需', '要', '通', '过',
+                        '就']
+        str = ''
+        for i in range(length):
+            # str += chr(random.randint(0x4E00, 0X9FA5))
+            str += ''.join((random.sample(chinese_list, k=1)))
+        str = startswith + str
+        return str
+
+    @staticmethod
+    def random_name():
+        first_name = ['赵', '钱', '孙', '李', '周', '吴', '郑', '王', '冯', '陈', '卫',
+                      '蒋', '沈', '韩', '杨', '朱', '秦', '何', '张', '孔', '曹']
+        last_name = ['汗', '函', '美', '杰', '斌', '帅', '亮', '权', '飞', '备',
+                     '能', '才', '阿涵', '子媚', '呵', '克']
+        name = ''.join((random.sample(first_name, k=1))) + ''.join(random.sample(last_name, k=1))
+        return name[::1]
+
+
+if __name__ == '__main__':
+    a = RandomUtil.random_string(10)
+    b = RandomUtil.random_phone()
+    c = RandomUtil.random_int(20)
+    print(a, b, c)
+    firsts = ['133', '153', '180', '181', '189', '177',
+              '149', '130', '131', '132', '155', '156',
+              '185', '186', '176', '134', '135', '136',
+              '138', '139', '150', '151', '152', '158',
+              '182', '183', '184', '157', '187', '188',
+              '178', '173', '147', '159', '137', '145', ]
+    print(type(firsts))
+    print(string.ascii_letters)
+    print(string.punctuation)
+    print(string.digits)
+    print(RandomUtil.random_int(2))
+    r = RandomUtil()
+    print(r.random_int_range(0, 10))
+    print(r.random_string(16, startswith='PuHui'))
+
+    print(r.random_chinese(5, startswith='哈哈哈'))
