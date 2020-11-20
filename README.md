@@ -1,4 +1,6 @@
-   def original_click(self, by_type, value):
+ #Read Me notes
+ 
+ def original_click(self, by_type, value):
         ele = ''
         try:
             if by_type == 'id':
